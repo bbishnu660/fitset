@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080a0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FitSet</title>
+<style>
+:root{--bg:#080a0c;--card:#151a1d;--line:#293238;--text:#f7f8f8;--muted:#9aa4ab;--green:#70df68;--greenbg:#19351e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#000;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+.app{max-width:430px;min-height:100vh;margin:auto;background:var(--bg);padding-bottom:88px}
+.header{height:75px;padding:17px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:26px;font-weight:950}.logo span{color:var(--green)}
+.gear{width:42px;height:42px;border-radius:13px;background:var(--card);border:1px solid var(--line);color:white;font-size:20px}
+main{padding:0 16px}.screen{display:none}.screen.active{display:block}
+.muted{color:var(--muted);font-size:13px}.date{color:var(--muted);font-size:14px}
+h1{font-size:32px;line-height:1.05;letter-spacing:-1.5px;margin:10px 0 18px}
+h2{font-size:22px;margin:25px 0 12px}
+.hero{background:linear-gradient(145deg,#17201b,#111719);border:1px solid #2b4030;border-radius:23px;padding:20px;margin:15px 0 25px}
+.badge{display:inline-block;background:var(--greenbg);color:var(--green);padding:8px 11px;border-radius:9px;font-size:11px;font-weight:950}
+.hero h2{font-size:25px;margin:12px 0 4px}.stats{display:flex;gap:17px;color:var(--muted);font-size:12px;margin:15px 0 18px}
+.primary{width:100%;border:0;border-radius:14px;background:var(--green);color:#061006;padding:16px;font-weight:950;font-size:15px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;display:flex;align-items:center;justify-content:space-between}
+.dayNo{color:var(--green);font-size:10px;font-weight:950;letter-spacing:.8px}.dayName{font-size:18px;font-weight:900;margin:5px 0 3px}.dayMeta{color:var(--muted);font-size:12px}
+.open{border:0;background:var(--greenbg);color:var(--green);border-radius:11px;padding:11px 13px;font-weight:900;font-size:11px}
+.back{border:0;background:none;color:var(--muted);font-size:14px;padding:8px 0}
+.eyebrow{color:var(--green);font-size:11px;font-weight:950;letter-spacing:1px}
+.exercise{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}
+.exTop{display:flex;justify-content:space-between;gap:10px}.exName{font-size:17px;font-weight:900}.exMeta{color:var(--muted);font-size:11px;margin-top:4px}
+.video{border:0;background:#e4eae5;color:#111;border-radius:9px;padding:8px;font-size:10px;font-weight:900}
+.set{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}.setTop{display:flex;justify-content:space-between}.target{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.feedback{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.feedback button{border:1px solid var(--line);background:#1c2226;color:#fff;border-radius:10px;padding:10px 4px;font-size:11px}
+.timer{position:fixed;inset:0;background:#050708;display:none;align-items:center;justify-content:center;text-align:center;z-index:50;padding:20px}.timer.show{display:flex}
+.rest{color:var(--green);font-size:13px;font-weight:950;letter-spacing:4px}.clock{font-size:90px;font-weight:950}.next{color:var(--muted);margin:10px 0 25px}
+.timer button{border:1px solid var(--line);background:var(--card);color:white;border-radius:12px;padding:13px}.timerRow{display:flex;gap:8px}.timerRow button{flex:1}.skip{width:100%;margin-top:8px;background:var(--green)!important;color:#061006!important;border:0!important;font-weight:900}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);height:76px;background:#101416;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:20}.nav button{border:0;background:none;color:var(--muted);font-size:10px}.nav button.active{color:var(--green)}.navIcon{display:block;font-size:21px;margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header"><div class="logo">FIT<span>SET</span></div><button class="gear">⚙</button></header>
+
+<main>
+<section id="home" class="screen active">
+<div class="date" id="date"></div>
+<h1>Ready to train?</h1>
+
+<div class="hero">
+<div class="badge">TODAY · DAY 1</div>
+<h2>Chest + Triceps</h2>
+<div class="muted">7 exercises · 21 sets · ~55 min</div>
+<div class="stats"><span>🔥 4 day streak</span><span>💪 Build muscle</span></div>
+<button class="primary" onclick="openWorkout(0)">START WORKOUT</button>
+</div>
+
+<h2>5-Day Program</h2>
+<div id="days">
+  <div class="day"><div><div class="dayNo">DAY 1</div><div class="dayName">Chest + Triceps</div><div class="dayMeta">7 exercises · 21 sets · ~55 min</div></div><button class="open" onclick="openWorkout(0)">OPEN</button></div>
+  <div class="day"><div><div class="dayNo">DAY 2</div><div class="dayName">Back + Biceps</div><div class="dayMeta">7 exercises · 21 sets · ~55 min</div></div><button class="open" onclick="openWorkout(1)">OPEN</button></div>
+  <div class="day"><div><div class="dayNo">DAY 3</div><div class="dayName">Legs</div><div class="dayMeta">8 exercises · 24 sets · ~60 min</div></div><button class="open" onclick="openWorkout(2)">OPEN</button></div>
+  <div class="day"><div><div class="dayNo">DAY 4</div><div class="dayName">Shoulders + Abs</div><div class="dayMeta">8 exercises · 24 sets · ~55 min</div></div><button class="open" onclick="openWorkout(3)">OPEN</button></div>
+  <div class="day"><div><div class="dayNo">DAY 5</div><div class="dayName">Full Body</div><div class="dayMeta">8 exercises · 24 sets · ~60 min</div></div><button class="open" onclick="openWorkout(4)">OPEN</button></div>
+</div>
+</section>
+
+<section id="workout" class="screen">
+<button class="back" onclick="show('home')">‹ Back</button>
+<div class="eyebrow" id="workoutDay"></div>
+<h1 id="workoutName"></h1>
+<div class="muted">3 sets per exercise · feedback after every set</div>
+<div id="exerciseList"></div>
+</section>
+</main>
+
+<nav class="nav">
+<button class="active" onclick="show('home')"><span class="navIcon">⌂</span>Home</button>
+<button onclick="openWorkout(currentDay)"><span class="navIcon">●</span>Workout</button>
+<button><span class="navIcon">↗</span>Progress</button>
+<button><span class="navIcon">⚙</span>Profile</button>
+</nav>
+</div>
+
+<div class="timer" id="timer">
+<div>
+<div class="rest">REST</div>
+<div class="clock" id="clock">2:00</div>
+<div class="next" id="next"></div>
+<div class="timerRow"><button onclick="change(-30)">−30s</button><button onclick="pause()" id="pauseBtn">PAUSE</button><button onclick="change(30)">+30s</button></div>
+<button class="skip" onclick="skip()">SKIP REST</button>
+</div>
+</div>
+
+<script>
+const DATA=[
+{day:"Day 1",name:"Chest + Triceps",ex:[["Barbell Bench Press",60,8,120],["Incline Dumbbell Press",22,10,120],["Chest Press Machine",50,10,120],["Cable Fly",15,12,90],["Rope Tricep Pushdown",25,12,90],["Overhead Cable Tricep Extension",18,10,90],["Dumbbell Tricep Kickback",8,12,75]]},
+{day:"Day 2",name:"Back + Biceps",ex:[["Lat Pulldown",55,10,120],["Seated Cable Row",55,10,120],["Chest-Supported Row",22,10,120],["Single-Arm Dumbbell Row",24,10,120],["Face Pull",20,12,90],["Dumbbell Curl",12,10,90],["Hammer Curl",12,10,90]]},
+{day:"Day 3",name:"Legs",ex:[["Barbell Squat",70,8,180],["Leg Press",110,10,150],["Romanian Deadlift",60,10,150],["Leg Extension",50,12,120],["Seated Leg Curl",45,12,120],["Walking Lunges",12,10,120],["Standing Calf Raise",60,15,90],["Cable Crunch",30,15,75]]},
+{day:"Day 4",name:"Shoulders + Abs",ex:[["Seated Dumbbell Shoulder Press",18,10,120],["Dumbbell Lateral Raise",10,12,75],["Cable Lateral Raise",7.5,12,75],["Rear Delt Fly",25,12,75],["Face Pull",20,12,90],["Cable Crunch",30,15,75],["Hanging Knee Raise",0,12,60],["Plank",0,45,60]]},
+{day:"Day 5",name:"Full Body",ex:[["Goblet Squat",24,10,120],["Bench Press",60,8,120],["Lat Pulldown",55,10,120],["Dumbbell Romanian Deadlift",24,10,120],["Seated Dumbbell Shoulder Press",18,10,120],["Dumbbell Curl",12,10,90],["Rope Tricep Pushdown",25,12,90],["Standing Calf Raise",60,15,90]]}
+];
+let currentDay=0,timerId=null,seconds=0,running=false;
+document.getElementById("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+function show(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ window.scrollTo(0,0);
+}
+function openWorkout(i){
+ currentDay=i;show("workout");
+ const d=DATA[i];
+ document.getElementById("workoutDay").textContent=d.day.toUpperCase();
+ document.getElementById("workoutName").textContent=d.name;
+ let out="";
+ d.ex.forEach((e,ei)=>{
+  out+=`<div class="exercise"><div class="exTop"><div><div class="exName">${e[0]}</div><div class="exMeta">3 sets · ${e[2]} reps · ${e[3]}s rest</div></div><button class="video">▷ VIDEO</button></div>`;
+  for(let s=1;s<=3;s++){
+   out+=`<div class="set"><div class="setTop"><div><b>SET ${s}</b><span class="target">${e[1]?e[1]+" kg × "+e[2]+" reps":e[2]+" sec"}</span></div><span>○</span></div>
+   <div class="feedback">
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">Easy</button>
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">+1 rep</button>
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">+2 reps</button>
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">+3 reps</button>
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">Difficult — completed</button>
+   <button onclick="finish(${e[3]},'${e[0]}','Set ${s+1}')">Failed</button>
+   </div></div>`;
+  }
+  out+="</div>";
+ });
+ document.getElementById("exerciseList").innerHTML=out;
+}
+function finish(rest,exercise,next){startTimer(rest,"Next: "+exercise+" · "+next)}
+function startTimer(s,n){
+ seconds=s;running=true;document.getElementById("next").textContent=n;document.getElementById("timer").classList.add("show");document.getElementById("pauseBtn").textContent="PAUSE";draw();
+ clearInterval(timerId);
+ timerId=setInterval(()=>{if(running){seconds--;draw();if(seconds<=0){clearInterval(timerId);running=false;document.getElementById("pauseBtn").textContent="DONE";navigator.vibrate?.([300,150,300]);}}},1000);
+}
+function draw(){document.getElementById("clock").textContent=Math.floor(seconds/60)+":"+String(seconds%60).padStart(2,"0")}
+function pause(){running=!running;document.getElementById("pauseBtn").textContent=running?"PAUSE":"RESUME"}
+function change(n){seconds=Math.max(0,seconds+n);draw()}
+function skip(){clearInterval(timerId);document.getElementById("timer").classList.remove("show")}
+</script>
+</body>
+</html>
